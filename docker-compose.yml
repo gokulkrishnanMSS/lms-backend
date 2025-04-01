@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  lms-app:
+    build:
+      context: .  # The current directory where Dockerfile is located
+      dockerfile: Dockerfile  # Optionally specify the Dockerfile if it's not named "Dockerfile"
+    container_name: lms-app
+
+    ports:
+      - "8081:8080"  # Map host port 8080 to container port 8080
+    depends_on:
+      - minio
+    networks:
+      - lms-network
+
+#  mssql-db:
+#    image: mcr.microsoft.com/mssql/server:2019-latest
+#    container_name: mssql-db
+#    environment:
+#      - ACCEPT_EULA=Y
+#      - SA_PASSWORD=Pass@123
+#    ports:
+#      - "1433:1433"  # Expose SQL Server port
+#    networks:
+#      - lms-network
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    environment:
+      - MINIO_ACCESS_KEY=kU9N9IDRsj2wjm4pxI9u
+      - MINIO_SECRET_KEY=OlNi9H0nvqkw1XWsFjhW7mC2WCMiU11xqCkHXOVX
+    command: server /data
+    ports:
+      - "9000:9000"  # Expose Minio UI port
+      - "9001:9001"  # Expose Minio UI port
+    networks:
+      - lms-network
+
+networks:
+  lms-network:
+    driver: bridge
